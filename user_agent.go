@@ -122,23 +122,23 @@ func analysisPart(ua string, index *int) (p Part) {
 // 读取User-Agent信息
 // @param ua string
 // @param index *int
-// @param delimiter byte
-// @param cat bool
+// @param delimiter byte 指定分隔符
+// @param isIgnoreNest bool 是否忽略嵌套在()、[]中的括号
 // @return []byte
-func readUa(ua string, index *int, delimiter byte, cat bool) []byte {
+func readUa(ua string, index *int, delimiter byte, isIgnoreNest bool) []byte {
 	var buffer []byte
 
 	i := *index
-	catalan := 0
+	nestLan := 0
 	for ; i < len(ua); i = i + 1 {
 		if ua[i] == delimiter {
-			if catalan == 0 {
+			if nestLan == 0 {
 				*index = i + 1
 				return buffer
 			}
-			catalan--
-		} else if cat && ua[i] == '(' {
-			catalan++
+			nestLan--
+		} else if isIgnoreNest && ua[i] == '(' {
+			nestLan++
 		}
 		buffer = append(buffer, ua[i])
 	}
